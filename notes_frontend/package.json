@@ -1,8 +1,10 @@
 {
-  "name": "react-kavia",
-  "version": "0.1.0",
+  "name": "react-kavia-notes",
+  "version": "1.0.0",
   "private": true,
+  "description": "Simple Notes App (React + Supabase) - Ocean Professional theme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.58.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1"

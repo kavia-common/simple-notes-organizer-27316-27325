@@ -1,82 +1,55 @@
-# Lightweight React Template for KAVIA
+# Simple Notes App (React + Supabase)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A lightweight personal notes app with magic-link authentication, built with React and Supabase. Styled with the Ocean Professional theme (blue primary, amber accents, subtle shadows, rounded corners).
 
 ## Features
+- Email magic link (OTP) sign-in (Supabase Auth)
+- Create, edit, delete notes
+- Debounced autosave for title/content
+- Star favorites, search, sort
+- Tags support (array field)
+- Ocean Professional theme UI
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+## Setup
+1. Install dependencies:
+   - npm install
+2. Ensure Supabase client:
+   - npm install @supabase/supabase-js
+3. Create a `.env` in the `notes_frontend` directory:
+```
+REACT_APP_SUPABASE_URL=your_url
+REACT_APP_SUPABASE_KEY=your_anon_key
+```
+4. Start dev server:
+   - npm start
 
-## Getting Started
+## Supabase configuration
+- Enable Email OTP (Magic Link) authentication.
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-### `npm test`
-
-Launches the test runner in interactive watch mode.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-## Customization
-
-### Colors
-
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
+Create the table and RLS policy:
+```sql
+create table if not exists notes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id),
+  title text not null default '',
+  content text not null default '',
+  tags text[] default '{}',
+  folder text,
+  is_favorite boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists notes_user_updated_idx on notes (user_id, updated_at desc);
+alter table notes enable row level security;
+create policy if not exists "users can manage their notes" on notes
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 ```
 
-### Components
+## Environment Variables
+- REACT_APP_SUPABASE_URL
+- REACT_APP_SUPABASE_KEY
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
-
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
-
-## Learn More
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Notes
+- The app shows a sign-in screen until authenticated.
+- Once signed in, you'll see the main layout: left Sidebar, TopBar, NoteList, and NoteEditor.
+- Autosave runs after a short pause when typing (debounced).

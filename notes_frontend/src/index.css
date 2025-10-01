@@ -1,13 +1,14 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Ocean Professional base theme */
+:root{
+  --primary:#2563EB; --secondary:#F59E0B; --success:#F59E0B; --error:#EF4444;
+  --bg:#f9fafb; --surface:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+html,body,#root{height:100%;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
+*{box-sizing:border-box}
+.button{background:var(--primary);color:white;border:none;padding:.6rem .9rem;border-radius:.6rem;cursor:pointer;transition:.2s box-shadow, .2s transform;}
+.button:hover{box-shadow:0 6px 18px rgba(37,99,235,.25);transform:translateY(-1px)}
+.input, .select, .textarea{width:100%;padding:.6rem .7rem;border:1px solid var(--border);border-radius:.6rem;background:var(--surface);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.hidden-sm{display:none}
+@media(min-width:900px){.hidden-sm{display:block}}
